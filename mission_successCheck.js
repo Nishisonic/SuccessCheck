@@ -18,7 +18,7 @@ function begin(fleetId) {
 }
 
 function body(data) {
-  return toComparable([canMissionToString(data.id, fleetId)])
+  return toComparable([canMissionToString(data.id, this.fleetId)])
 }
 
 function end() {}
