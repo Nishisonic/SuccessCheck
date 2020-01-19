@@ -1,6 +1,6 @@
 /**
  * 遠征確認
- * @version 2.0.0
+ * @version 2.0.1
  * @author Nishikuma
  */
 
@@ -46,6 +46,10 @@ function canMission(id, fleetId) {
         var CA = Optional.ofNullable(stypes[5]).orElse([]).length
         /** 軽空母 */
         var CVL = Optional.ofNullable(stypes[7]).orElse([]).length
+        /** 護衛空母 */
+        var CVE = Optional.ofNullable(Java.from(stypes[7])).orElse([]).filter(function (ship) {
+            return ship.max.taisen > 0
+        }).length
         /** 航空戦艦 */
         var CVB = Optional.ofNullable(stypes[10]).orElse([]).length
         /** 正規空母 */
@@ -109,7 +113,7 @@ function canMission(id, fleetId) {
             case 102: // 長時間対潜警戒
                 return flagshipLv >= 35 && shipNum >= 5 && (CL >= 1 && (DE + DD) >= 3 || hasFleetEscortForce(stypes)) && (AA >= 162 && ASW >= 280 && LOS >= 60) && totalLv >= 185
             case 103: // 南西方面連絡線哨戒
-                return shipNum >= 5 && firePower >= 300
+                return flagshipLv >= 40 && shipNum >= 5 && (firePower >= 300 && ASW >= 200)
             case 9: // タンカー護衛任務
                 return flagshipLv >= 3 && shipNum >= 4 && hasFleetEscortForce(stypes)
             case 10: // 強行偵察任務
@@ -131,7 +135,7 @@ function canMission(id, fleetId) {
             case 111: // 敵泊地強襲反撃作戦
                 return flagshipLv >= 50 && shipNum >= 6 && (CA >= 1 && CL >= 1 && DD >= 3) && firePower >= 360
             case 112: // 南西諸島離島哨戒作戦
-                return shipNum >= 6 && (AV >= 1 && CL >= 1 && DD >= 4) && firePower >= 400
+                return flagshipLv >= 50 && shipNum >= 6 && (AV >= 1 && CL >= 1 && DD >= 4) && firePower >= 400
             case 113: // 南西諸島離島防衛作戦
                 return shipNum >= 6 && (CA >= 2 && CL >= 1 && DD >= 2 && (SS + CVS) >= 1) && firePower >= 500 && ASW >= 280
             case 17: // 敵地偵察作戦
@@ -185,11 +189,11 @@ function canMission(id, fleetId) {
             case 41: // ブルネイ泊地沖哨戒
                 return flagshipLv >= 30 && shipNum >= 3 && (DE + DD) >= 3 && (firePower >= 60 && AA >= 80 && ASW >= 210) && totalLv >= 100
             case 42: // ミ船団護衛(一号船団)
-                return shipNum >= 4
+                return flagshipLv >= 50 && shipNum >= 4 && ((CVE + CL) >= 1 && (DD >= 2 || DE >= 2))
             case 43: // ミ船団護衛(二号船団)
                 return shipNum >= 6 && (((flagshipStype === 7 && flagship.max.taisen > 0) && (DE + DD) >= 2) || (flagshipStype === 7 && CL === 1 && DD >= 4)) && (firePower >= 500 && ASW >= 280)
             case 44: // 航空装備輸送任務
-                return shipNum >= 6 && ((CV + CVL + ACV) >= 2 && AV >= 1 && CL >= 1) && ASW >= 200 && (drumShips >= 3 && drum >= 6)
+                return flagshipLv >= 60 && shipNum >= 6 && ((CV + CVL + ACV) >= 2 && AV >= 1 && CL >= 1 && DD >= 2) && ASW >= 200 && (drumShips >= 3 && drum >= 6)
             default:
                 return undefined
         }
@@ -282,5 +286,5 @@ function hasFleetEscortForce(stypes) {
     var CVE = Optional.ofNullable(Java.from(stypes[7])).orElse([]).filter(function (ship) {
         return ship.max.taisen > 0
     }).length
-    return CL >= 1 && DD >= 2 || DD >= 1 && DE >= 3 || TV >= 1 && DE >= 2 || CVE >= 1 && DE >= 2 || CVE >= 1 && DD >= 2
+    return CL >= 1 && (DD + DE) >= 2 || DD >= 1 && DE >= 3 || TV >= 1 && DE >= 2 || CVE >= 1 && DE >= 2 || CVE >= 1 && DD >= 2
 }
