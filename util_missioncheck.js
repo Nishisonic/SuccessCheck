@@ -51,17 +51,17 @@ function canMission(id, fleetId) {
             return ship.max.taisen > 0
         }).length
         /** 航空戦艦 */
-        var CVB = Optional.ofNullable(stypes[10]).orElse([]).length
+        var BBV = Optional.ofNullable(stypes[10]).orElse([]).length
         /** 正規空母 */
         var CV = Optional.ofNullable(stypes[11]).orElse([]).length
         /** 潜水艦 */
         var SS = Optional.ofNullable(stypes[13]).orElse([]).length
         /** 潜水空母 */
-        var CVS = Optional.ofNullable(stypes[14]).orElse([]).length
+        var SSV = Optional.ofNullable(stypes[14]).orElse([]).length
         /** 水上機母艦 */
         var AV = Optional.ofNullable(stypes[16]).orElse([]).length
         /** 装甲空母 */
-        var ACV = Optional.ofNullable(stypes[18]).orElse([]).length
+        var CVB = Optional.ofNullable(stypes[18]).orElse([]).length
         /** 潜水母艦 */
         var AS = Optional.ofNullable(stypes[20]).orElse([]).length
         /** 旗艦 */
@@ -129,7 +129,7 @@ function canMission(id, fleetId) {
             case 14: // 包囲陸戦隊撤収作戦
                 return flagshipLv >= 6 && shipNum >= 6 && (CL >= 1 && DD >= 3)
             case 15: // 囮機動部隊支援作戦
-                return flagshipLv >= 6 && shipNum >= 6 && ((CV + CVL + ACV + AV) >= 2 && DD >= 2)
+                return flagshipLv >= 6 && shipNum >= 6 && ((CV + CVL + CVB + AV) >= 2 && DD >= 2)
             case 16: // 艦隊決戦援護作戦
                 return flagshipLv >= 10 && shipNum >= 6 && (CL >= 1 && DD >= 2)
             case 110: // 南西方面航空偵察作戦
@@ -139,22 +139,22 @@ function canMission(id, fleetId) {
             case 112: // 南西諸島離島哨戒作戦
                 return flagshipLv >= 50 && shipNum >= 6 && (AV >= 1 && CL >= 1 && DD >= 4) && (firePower >= 400 && ASW >= 220 && LOS >= 190) && totalLv >= 270
             case 113: // 南西諸島離島防衛作戦
-                return flagshipLv >= 55 && shipNum >= 6 && (CA >= 2 && CL >= 1 && DD >= 2 && (SS + CVS) >= 1) && (firePower >= 500 && ASW >= 280) && totalLv >= 437
+                return flagshipLv >= 55 && shipNum >= 6 && (CA >= 2 && CL >= 1 && DD >= 2 && (SS + SSV) >= 1) && (firePower >= 500 && ASW >= 280) && totalLv >= 437
             // 北方海域
             case 17: // 敵地偵察作戦
                 return flagshipLv >= 20 && shipNum >= 6 && (CL >= 1 && DD >= 3)
             case 18: // 航空機輸送作戦
-                return flagshipLv >= 15 && shipNum >= 6 && ((CV + CVL + ACV + AV) >= 3 && DD >= 2)
+                return flagshipLv >= 15 && shipNum >= 6 && ((CV + CVL + CVB + AV) >= 3 && DD >= 2)
             case 19: // 北号作戦
-                return flagshipLv >= 20 && shipNum >= 6 && (CVB >= 2 && DD >= 2)
+                return flagshipLv >= 20 && shipNum >= 6 && (BBV >= 2 && DD >= 2)
             case 20: // 潜水艦哨戒任務
-                return shipNum >= 2 && ((SS + CVS) >= 1 && CL >= 1)
+                return shipNum >= 2 && ((SS + SSV) >= 1 && CL >= 1)
             case 21: // 北方鼠輸送作戦
                 return flagshipLv >= 15 && shipNum >= 5 && (CL >= 1 && DD >= 4) && totalLv >= 30 && drumShips >= 3
             case 22: // 艦隊演習
                 return flagshipLv >= 30 && shipNum >= 6 && (CA >= 1 && CL >= 1 && DD >= 2) && totalLv >= 45
             case 23: // 航空戦艦運用演習
-                return flagshipLv >= 50 && shipNum >= 6 && (CVB >= 2 && DD >= 2) && totalLv >= 200
+                return flagshipLv >= 50 && shipNum >= 6 && (BBV >= 2 && DD >= 2) && totalLv >= 200
             case 24: // 北方航路海上護衛
                 return flagshipLv >= 50 && shipNum >= 6 && (flagshipStype === 3 && (DE + DD) >= 4) && totalLv >= 200
             // 南西海域
@@ -165,37 +165,37 @@ function canMission(id, fleetId) {
             case 43: // ミ船団護衛(二号船団)
                 return flagshipLv >= 55 && shipNum >= 6 && (((flagshipStype === 7 && flagship.max.taisen > 0) && (DE + DD) >= 2) || (flagshipStype === 7 && CL === 1 && DD >= 4)) && (firePower >= 500 && ASW >= 280) && totalLv >= 406
             case 44: // 航空装備輸送任務
-                return flagshipLv >= 35 && shipNum >= 6 && ((CV + CVL + ACV) >= 2 && AV >= 1 && CL >= 1 && DD >= 2) && ASW >= 200 && (drumShips >= 3 && drum >= 6) && totalLv >= 210
+                return flagshipLv >= 35 && shipNum >= 6 && ((CV + CVL + CVB) >= 2 && AV >= 1 && CL >= 1 && DD >= 2) && ASW >= 200 && (drumShips >= 3 && drum >= 6) && totalLv >= 210
             case 45: // ボーキサイト船団護衛
                 return flagshipLv >= 51 && shipNum >= 5 && (flagshipStype === 7 && (DE + DD) >= 4) && (AA >= 240 && ASW >= 300 && LOS >= 180) && totalLv >= 271
             // 西方海域
             case 25: // 通商破壊作戦
                 return flagshipLv >= 25 && shipNum >= 4 && (CA >= 2 && DD >= 2)
             case 26: // 敵母港空襲作戦
-                return flagshipLv >= 30 && shipNum >= 4 && ((CV + CVL + ACV + AV) >= 1 && CL >= 1 && DD >= 2)
+                return flagshipLv >= 30 && shipNum >= 4 && ((CV + CVL + CVB + AV) >= 1 && CL >= 1 && DD >= 2)
             case 27: // 潜水艦通商破壊作戦
-                return shipNum >= 2 && (SS + CVS) >= 2
+                return shipNum >= 2 && (SS + SSV) >= 2
             case 28: // 西方海域封鎖作戦
-                return flagshipLv >= 30 && shipNum >= 3 && (SS + CVS) >= 3
+                return flagshipLv >= 30 && shipNum >= 3 && (SS + SSV) >= 3
             case 29: // 潜水艦派遣演習
-                return flagshipLv >= 50 && shipNum >= 3 && (SS + CVS) >= 3
+                return flagshipLv >= 50 && shipNum >= 3 && (SS + SSV) >= 3
             case 30: // 潜水艦派遣作戦
-                return flagshipLv >= 55 && shipNum >= 4 && (SS + CVS) >= 4
+                return flagshipLv >= 55 && shipNum >= 4 && (SS + SSV) >= 4
             case 31: // 海外艦との接触
-                return flagshipLv >= 60 && shipNum >= 4 && (SS + CVS) >= 4 && totalLv >= 200
+                return flagshipLv >= 60 && shipNum >= 4 && (SS + SSV) >= 4 && totalLv >= 200
             case 32: // 遠洋練習航海
                 return flagshipLv >= 5 && shipNum >= 3 && (flagshipStype === 21 && DD >= 2)
             case 131: // 西方海域偵察作戦
                 return flagshipLv >= 50 && shipNum >= 5 && (flagshipStype === 16 && DD >= 4) && (ASW >= 240 && LOS >= 300)
             case 132: // 西方潜水艦作戦
-                return flagshipLv >= 55 && shipNum >= 5 && (flagshipStype === 20 && (SS + CVS) >= 3)
+                return flagshipLv >= 55 && shipNum >= 5 && (flagshipStype === 20 && (SS + SSV) >= 3)
             // 南方海域
             case 33: // 前衛支援任務
                 return shipNum >= 2 && DD >= 2
             case 34: // 艦隊決戦支援任務
                 return shipNum >= 2 && DD >= 2
             case 35: // MO作戦
-                return flagshipLv >= 40 && shipNum >= 6 && ((CV + CVL + ACV + AV) >= 2 && CA >= 1 && DD >= 1)
+                return flagshipLv >= 40 && shipNum >= 6 && ((CV + CVL + CVB + AV) >= 2 && CA >= 1 && DD >= 1)
             case 36: // 水上機基地建設
                 return flagshipLv >= 30 && shipNum >= 6 && (AV >= 2 && CL >= 1 && DD >= 1)
             case 37: // 東京急行
@@ -203,7 +203,7 @@ function canMission(id, fleetId) {
             case 38: // 東京急行(弐)
                 return flagshipLv >= 65 && shipNum >= 6 && DD >= 5 && totalLv >= 240 && (drumShips >= 4 && drum >= 8)
             case 39: // 遠洋潜水艦作戦
-                return flagshipLv >= 3 && shipNum >= 5 && (AS >= 1 && (SS + CVS) >= 4) && totalLv >= 180
+                return flagshipLv >= 3 && shipNum >= 5 && (AS >= 1 && (SS + SSV) >= 4) && totalLv >= 180
             case 40: // 水上機前線輸送
                 return flagshipLv >= 25 && shipNum >= 6 && (flagshipStype === 3 && AV >= 2 && DD >= 2) && totalLv >= 150
             default:
@@ -294,9 +294,9 @@ function hasFleetEscortForce(stypes) {
     var DE = Optional.ofNullable(stypes[1]).orElse([]).length
     var DD = Optional.ofNullable(stypes[2]).orElse([]).length
     var CL = Optional.ofNullable(stypes[3]).orElse([]).length
-    var TV = Optional.ofNullable(stypes[21]).orElse([]).length
+    var CT = Optional.ofNullable(stypes[21]).orElse([]).length
     var CVE = Optional.ofNullable(Java.from(stypes[7])).orElse([]).filter(function (ship) {
         return ship.max.taisen > 0
     }).length
-    return CL >= 1 && (DD + DE) >= 2 || DD >= 1 && DE >= 3 || TV >= 1 && DE >= 2 || CVE >= 1 && DE >= 2 || CVE >= 1 && DD >= 2
+    return CL >= 1 && (DD + DE) >= 2 || DD >= 1 && DE >= 3 || CT >= 1 && DE >= 2 || CVE >= 1 && DE >= 2 || CVE >= 1 && DD >= 2
 }
