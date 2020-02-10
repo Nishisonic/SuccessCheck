@@ -1,6 +1,6 @@
 /**
  * 遠征確認
- * @version 2.0.2
+ * @version 2.0.3
  * @author Nishikuma
  */
 
@@ -79,17 +79,18 @@ function canMission(id, fleetId) {
         /** 火力合計 */
         var firePower = toTotalValue(ships, "houg")
         /** 対空合計 */
-        var AA = toTotalValue(ships, "tyku", [10, 11, 41])
+        var AA = toTotalValue(ships, "tyku")
         /** 対潜合計 */
         var ASW = toTotalValue(ships, "tais", [10, 11, 41])
         /** 索敵合計 */
-        var LOS = toTotalValue(ships, "saku", [10, 11, 41])
+        var LOS = toTotalValue(ships, "saku")
         /** ドラム缶所持艦合計 */
         var drumShips = toHasItemShipNum(ships, [75])
         /** ドラム缶合計 */
         var drum = toHasItemSum(ships, [75])
 
         switch (id) {
+            // 鎮守府海域
             case 1: // 練習航海
                 return shipNum >= 2
             case 2: // 長距離練習航海
@@ -101,7 +102,7 @@ function canMission(id, fleetId) {
             case 5: // 海上護衛任務
                 return flagshipLv >= 3 && shipNum >= 4 && hasFleetEscortForce(stypes)
             case 6: // 防空射撃演習
-                return flagshipLv >= 5 && shipNum >= 4
+                return flagshipLv >= 4 && shipNum >= 4
             case 7: // 観艦式予行
                 return flagshipLv >= 5 && shipNum >= 6
             case 8: // 観艦式
@@ -109,11 +110,12 @@ function canMission(id, fleetId) {
             case 100: // 兵站強化任務
                 return flagshipLv >= 5 && shipNum >= 4 && (DE + DD) >= 3
             case 101: // 海峡警備行動
-                return flagshipLv >= 20 && shipNum >= 4 && (DE + DD) >= 4 && (AA >= 70 && ASW >= 180) && totalLv >= 110
+                return flagshipLv >= 20 && shipNum >= 4 && (DE + DD) >= 4 && (firePower >= 50 && AA >= 70 && ASW >= 180)
             case 102: // 長時間対潜警戒
                 return flagshipLv >= 35 && shipNum >= 5 && (CL >= 1 && (DE + DD) >= 3 || hasFleetEscortForce(stypes)) && (AA >= 90 && ASW >= 280 && LOS >= 60) && totalLv >= 107
             case 103: // 南西方面連絡線哨戒
                 return flagshipLv >= 40 && shipNum >= 5 && (CL >= 1 && (DE + DD) >= 2 || hasFleetEscortForce(stypes)) && (firePower >= 300 && AA >= 200 && ASW >= 200 && LOS >= 120) && totalLv >= 200
+            // 南西諸島海域
             case 9: // タンカー護衛任務
                 return flagshipLv >= 3 && shipNum >= 4 && hasFleetEscortForce(stypes)
             case 10: // 強行偵察任務
@@ -137,7 +139,8 @@ function canMission(id, fleetId) {
             case 112: // 南西諸島離島哨戒作戦
                 return flagshipLv >= 50 && shipNum >= 6 && (AV >= 1 && CL >= 1 && DD >= 4) && (firePower >= 400 && ASW >= 220 && LOS >= 190) && totalLv >= 270
             case 113: // 南西諸島離島防衛作戦
-                return flagshipLv >= 55 && shipNum >= 6 && (CA >= 2 && CL >= 1 && DD >= 2 && (SS + CVS) >= 1) && (firePower >= 500 && ASW >= 280) && totalLv >= 450
+                return flagshipLv >= 55 && shipNum >= 6 && (CA >= 2 && CL >= 1 && DD >= 2 && (SS + CVS) >= 1) && (firePower >= 500 && ASW >= 280) && totalLv >= 437
+            // 北方海域
             case 17: // 敵地偵察作戦
                 return flagshipLv >= 20 && shipNum >= 6 && (CL >= 1 && DD >= 3)
             case 18: // 航空機輸送作戦
@@ -154,6 +157,18 @@ function canMission(id, fleetId) {
                 return flagshipLv >= 50 && shipNum >= 6 && (CVB >= 2 && DD >= 2) && totalLv >= 200
             case 24: // 北方航路海上護衛
                 return flagshipLv >= 50 && shipNum >= 6 && (flagshipStype === 3 && (DE + DD) >= 4) && totalLv >= 200
+            // 南西海域
+            case 41: // ブルネイ泊地沖哨戒
+                return flagshipLv >= 30 && shipNum >= 3 && (DE + DD) >= 3 && (firePower >= 60 && AA >= 80 && ASW >= 210) && totalLv >= 100
+            case 42: // ミ船団護衛(一号船団)
+                return flagshipLv >= 45 && shipNum >= 4 && (CL >= 1 && (DE + DD) >= 2 || hasFleetEscortForce(stypes)) && totalLv >= 200
+            case 43: // ミ船団護衛(二号船団)
+                return flagshipLv >= 55 && shipNum >= 6 && (((flagshipStype === 7 && flagship.max.taisen > 0) && (DE + DD) >= 2) || (flagshipStype === 7 && CL === 1 && DD >= 4)) && (firePower >= 500 && ASW >= 280) && totalLv >= 406
+            case 44: // 航空装備輸送任務
+                return flagshipLv >= 35 && shipNum >= 6 && ((CV + CVL + ACV) >= 2 && AV >= 1 && CL >= 1 && DD >= 2) && ASW >= 200 && (drumShips >= 3 && drum >= 6) && totalLv >= 210
+            case 45: // ボーキサイト船団護衛
+                return flagshipLv >= 51 && shipNum >= 5 && (flagshipStype === 7 && (DE + DD) >= 4) && (AA >= 240 && ASW >= 300 && LOS >= 180) && totalLv >= 271
+            // 西方海域
             case 25: // 通商破壊作戦
                 return flagshipLv >= 25 && shipNum >= 4 && (CA >= 2 && DD >= 2)
             case 26: // 敵母港空襲作戦
@@ -170,6 +185,11 @@ function canMission(id, fleetId) {
                 return flagshipLv >= 60 && shipNum >= 4 && (SS + CVS) >= 4 && totalLv >= 200
             case 32: // 遠洋練習航海
                 return flagshipLv >= 5 && shipNum >= 3 && (flagshipStype === 21 && DD >= 2)
+            case 131: // 西方海域偵察作戦
+                return flagshipLv >= 50 && shipNum >= 5 && (flagshipStype === 16 && DD >= 4) && (ASW >= 240 && LOS >= 300)
+            case 132: // 西方潜水艦作戦
+                return flagshipLv >= 55 && shipNum >= 5 && (flagshipStype === 20 && (SS + CVS) >= 3)
+            // 南方海域
             case 33: // 前衛支援任務
                 return shipNum >= 2 && DD >= 2
             case 34: // 艦隊決戦支援任務
@@ -186,14 +206,6 @@ function canMission(id, fleetId) {
                 return flagshipLv >= 3 && shipNum >= 5 && (AS >= 1 && (SS + CVS) >= 4) && totalLv >= 180
             case 40: // 水上機前線輸送
                 return flagshipLv >= 25 && shipNum >= 6 && (flagshipStype === 3 && AV >= 2 && DD >= 2) && totalLv >= 150
-            case 41: // ブルネイ泊地沖哨戒
-                return flagshipLv >= 30 && shipNum >= 3 && (DE + DD) >= 3 && (firePower >= 60 && AA >= 80 && ASW >= 210) && totalLv >= 100
-            case 42: // ミ船団護衛(一号船団)
-                return flagshipLv >= 45 && shipNum >= 4 && (CL >= 1 && (DE + DD) >= 2 || hasFleetEscortForce(stypes)) && totalLv >= 200
-            case 43: // ミ船団護衛(二号船団)
-                return flagshipLv >= 55 && shipNum >= 6 && (((flagshipStype === 7 && flagship.max.taisen > 0) && (DE + DD) >= 2) || (flagshipStype === 7 && CL === 1 && DD >= 4)) && (firePower >= 500 && ASW >= 280) && totalLv >= 464
-            case 44: // 航空装備輸送任務
-                return flagshipLv >= 35 && shipNum >= 6 && ((CV + CVL + ACV) >= 2 && AV >= 1 && CL >= 1 && DD >= 2) && ASW >= 200 && (drumShips >= 3 && drum >= 6) && totalLv >= 216
             default:
                 return undefined
         }

@@ -1,9 +1,3 @@
-/**
- * 遠征確認
- * @version 2.0.2
- * @author Nishikuma
- */
-
 load('script/utils.js')
 load('script/util_missioncheck.js')
 
