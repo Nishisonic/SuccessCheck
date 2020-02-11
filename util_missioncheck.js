@@ -1,11 +1,9 @@
 /**
  * 遠征確認
- * @version 2.0.4
+ * @version 2.0.5
  * @author Nishikuma
  */
 
-Optional = Java.type("java.util.Optional")
-Collectors = Java.type("java.util.stream.Collectors")
 GlobalContext = Java.type("logbook.data.context.GlobalContext")
 
 /**
@@ -33,37 +31,63 @@ function canMission(id, fleetId) {
     if (dock && dock.ships) {
         var ships = Java.from(dock.ships)
         var shipNum = ships.length
-        var stypes = dock.ships.stream().collect(Collectors.groupingBy(function (ship) {
-            return ship.stype
-        }))
+        var stypes = ships.reduce(function(array, ship) {
+            if (!Array.isArray(array[ship.stype])) {
+                array[ship.stype] = []
+            }
+            array[ship.stype].push(ship)
+            return array
+        }, {})
         /** 海防艦 */
-        var DE = Optional.ofNullable(stypes[1]).orElse([]).length
+        var DE = (stypes[1] || []).length
         /** 駆逐艦 */
-        var DD = Optional.ofNullable(stypes[2]).orElse([]).length
+        var DD = (stypes[2] || []).length
         /** 軽巡洋艦 */
-        var CL = Optional.ofNullable(stypes[3]).orElse([]).length
+        var CL = (stypes[3] || []).length
+        /** 重雷装巡洋艦 */
+        var CLT = (stypes[4] || []).length
         /** 重巡洋艦 */
-        var CA = Optional.ofNullable(stypes[5]).orElse([]).length
+        var CA = (stypes[5] || []).length
+        /** 航空巡洋艦 */
+        var CAV = (stypes[6] || []).length
         /** 軽空母 */
-        var CVL = Optional.ofNullable(stypes[7]).orElse([]).length
+        var CVL = (stypes[7] || []).length
         /** 護衛空母 */
-        var CVE = Optional.ofNullable(Java.from(stypes[7])).orElse([]).filter(function (ship) {
+        var CVE = (stypes[7] || []).filter(function (ship) {
             return ship.max.taisen > 0
         }).length
+        /** 巡洋戦艦 */
+        var FBB = (stypes[8] || []).length
+        /** 戦艦 */
+        var BB = (stypes[9] || []).length
         /** 航空戦艦 */
-        var BBV = Optional.ofNullable(stypes[10]).orElse([]).length
-        /** 正規空母 */
-        var CV = Optional.ofNullable(stypes[11]).orElse([]).length
+        var BBV = (stypes[10] || []).length
+        /** 航空母艦 */
+        var CV = (stypes[11] || []).length
+        /** 超弩級戦艦 */
+        var XBB = (stypes[12] || []).length
         /** 潜水艦 */
-        var SS = Optional.ofNullable(stypes[13]).orElse([]).length
+        var SS = (stypes[13] || []).length
         /** 潜水空母 */
-        var SSV = Optional.ofNullable(stypes[14]).orElse([]).length
+        var SSV = (stypes[14] || []).length
+        /** 補給艦(敵) */
+        var AP = (stypes[15] || []).length
         /** 水上機母艦 */
-        var AV = Optional.ofNullable(stypes[16]).orElse([]).length
+        var AV = (stypes[16] || []).length
+        /** 揚陸艦 */
+        var LHA = (stypes[17] || []).length
         /** 装甲空母 */
-        var CVB = Optional.ofNullable(stypes[18]).orElse([]).length
+        var CVB = (stypes[18] || []).length
+        /** 工作艦 */
+        var AR = (stypes[19] || []).length
         /** 潜水母艦 */
-        var AS = Optional.ofNullable(stypes[20]).orElse([]).length
+        var AS = (stypes[20] || []).length
+        /** 練習巡洋艦 */
+        var CT = (stypes[21] || []).length
+        /** 補給艦 */
+        var AO = (stypes[22] || []).length
+        /** 護衛艦隊か */
+        var isFleetEscortForce = CL >= 1 && (DD + DE) >= 2 || DD >= 1 && DE >= 3 || CT >= 1 && DE >= 2 || CVE >= 1 && DE >= 2 || CVE >= 1 && DD >= 2
         /** 旗艦 */
         var flagship = ships[0]
         /** 旗艦Lv */
@@ -77,7 +101,7 @@ function canMission(id, fleetId) {
             return previous + current
         }, 0)
         /** 火力合計 */
-        var firePower = toTotalValue(ships, "houg")
+        var FP = toTotalValue(ships, "houg")
         /** 対空合計 */
         var AA = toTotalValue(ships, "tyku")
         /** 対潜合計 */
@@ -98,9 +122,9 @@ function canMission(id, fleetId) {
             case 3: // 警備任務
                 return flagshipLv >= 3 && shipNum >= 3
             case 4: // 対潜警戒任務
-                return flagshipLv >= 3 && shipNum >= 3 && hasFleetEscortForce(stypes)
+                return flagshipLv >= 3 && shipNum >= 3 && isFleetEscortForce
             case 5: // 海上護衛任務
-                return flagshipLv >= 3 && shipNum >= 4 && hasFleetEscortForce(stypes)
+                return flagshipLv >= 3 && shipNum >= 4 && isFleetEscortForce
             case 6: // 防空射撃演習
                 return flagshipLv >= 4 && shipNum >= 4
             case 7: // 観艦式予行
@@ -108,16 +132,16 @@ function canMission(id, fleetId) {
             case 8: // 観艦式
                 return flagshipLv >= 6 && shipNum >= 6
             case 100: // 兵站強化任務
-                return flagshipLv >= 5 && shipNum >= 4 && (DE + DD) >= 3
+                return flagshipLv >= 5 && shipNum >= 4 && (DE + DD) >= 3 && totalLv >= 10
             case 101: // 海峡警備行動
-                return flagshipLv >= 20 && shipNum >= 4 && (DE + DD) >= 4 && (firePower >= 50 && AA >= 70 && ASW >= 180)
+                return flagshipLv >= 20 && shipNum >= 4 && (DE + DD) >= 4 && (FP >= 50 && AA >= 70 && ASW >= 180)
             case 102: // 長時間対潜警戒
-                return flagshipLv >= 35 && shipNum >= 5 && (CL >= 1 && (DE + DD) >= 3 || hasFleetEscortForce(stypes)) && (AA >= 90 && ASW >= 280 && LOS >= 60) && totalLv >= 107
+                return flagshipLv >= 35 && shipNum >= 5 && (CL >= 1 && (DE + DD) >= 3 || isFleetEscortForce) && (AA >= 90 && ASW >= 280 && LOS >= 60) && totalLv >= 107
             case 103: // 南西方面連絡線哨戒
-                return flagshipLv >= 40 && shipNum >= 5 && (CL >= 1 && (DE + DD) >= 2 || hasFleetEscortForce(stypes)) && (firePower >= 300 && AA >= 200 && ASW >= 200 && LOS >= 120) && totalLv >= 200
+                return flagshipLv >= 40 && shipNum >= 5 && (CL >= 1 && (DE + DD) >= 2 || isFleetEscortForce) && (FP >= 300 && AA >= 200 && ASW >= 200 && LOS >= 120) && totalLv >= 200
             // 南西諸島海域
             case 9: // タンカー護衛任務
-                return flagshipLv >= 3 && shipNum >= 4 && hasFleetEscortForce(stypes)
+                return flagshipLv >= 3 && shipNum >= 4 && isFleetEscortForce
             case 10: // 強行偵察任務
                 return flagshipLv >= 3 && shipNum >= 3 && CL >= 2
             case 11: // ボーキサイト輸送任務
@@ -135,11 +159,11 @@ function canMission(id, fleetId) {
             case 110: // 南西方面航空偵察作戦
                 return flagshipLv >= 40 && shipNum >= 6 && (AV >= 1 && CL >= 1 && (DE + DD) >= 2) && (AA >= 200 && ASW >= 200 && LOS >= 140) && totalLv >= 150
             case 111: // 敵泊地強襲反撃作戦
-                return flagshipLv >= 45 && shipNum >= 6 && (CA >= 1 && CL >= 1 && DD >= 3) && (firePower >= 360 && LOS >= 140) && totalLv >= 220
+                return flagshipLv >= 45 && shipNum >= 6 && (CA >= 1 && CL >= 1 && DD >= 3) && (FP >= 360 && LOS >= 140) && totalLv >= 220
             case 112: // 南西諸島離島哨戒作戦
-                return flagshipLv >= 50 && shipNum >= 6 && (AV >= 1 && CL >= 1 && DD >= 4) && (firePower >= 400 && ASW >= 220 && LOS >= 190) && totalLv >= 270
+                return flagshipLv >= 50 && shipNum >= 6 && (AV >= 1 && CL >= 1 && DD >= 4) && (FP >= 400 && ASW >= 220 && LOS >= 190) && totalLv >= 270
             case 113: // 南西諸島離島防衛作戦
-                return flagshipLv >= 55 && shipNum >= 6 && (CA >= 2 && CL >= 1 && DD >= 2 && (SS + SSV) >= 1) && (firePower >= 500 && ASW >= 280) && totalLv >= 437
+                return flagshipLv >= 55 && shipNum >= 6 && (CA >= 2 && CL >= 1 && DD >= 2 && (SS + SSV) >= 1) && (FP >= 500 && ASW >= 280) && totalLv >= 437
             // 北方海域
             case 17: // 敵地偵察作戦
                 return flagshipLv >= 20 && shipNum >= 6 && (CL >= 1 && DD >= 3)
@@ -159,15 +183,15 @@ function canMission(id, fleetId) {
                 return flagshipLv >= 50 && shipNum >= 6 && (flagshipStype === 3 && (DE + DD) >= 4) && totalLv >= 200
             // 南西海域
             case 41: // ブルネイ泊地沖哨戒
-                return flagshipLv >= 30 && shipNum >= 3 && (DE + DD) >= 3 && (firePower >= 60 && AA >= 80 && ASW >= 210) && totalLv >= 100
+                return flagshipLv >= 30 && shipNum >= 3 && (DE + DD) >= 3 && (FP >= 60 && AA >= 80 && ASW >= 210) && totalLv >= 100
             case 42: // ミ船団護衛(一号船団)
-                return flagshipLv >= 45 && shipNum >= 4 && (CL >= 1 && (DE + DD) >= 2 || hasFleetEscortForce(stypes)) && totalLv >= 200
+                return flagshipLv >= 45 && shipNum >= 4 && (CL >= 1 && (DE + DD) >= 2 || isFleetEscortForce) && totalLv >= 200
             case 43: // ミ船団護衛(二号船団)
-                return flagshipLv >= 55 && shipNum >= 6 && (((flagshipStype === 7 && flagship.max.taisen > 0) && (DE + DD) >= 2) || (flagshipStype === 7 && CL === 1 && DD >= 4)) && (firePower >= 500 && ASW >= 280) && totalLv >= 406
+                return flagshipLv >= 55 && shipNum >= 6 && (((flagshipStype === 7 && flagship.max.taisen > 0) && (DE + DD) >= 2) || (flagshipStype === 7 && CL === 1 && DD >= 4)) && (FP >= 500 && ASW >= 280) && totalLv >= 406
             case 44: // 航空装備輸送任務
                 return flagshipLv >= 35 && shipNum >= 6 && ((CV + CVL + CVB) >= 2 && AV >= 1 && CL >= 1 && DD >= 2) && ASW >= 200 && (drumShips >= 3 && drum >= 6) && totalLv >= 210
             case 45: // ボーキサイト船団護衛
-                return flagshipLv >= 51 && shipNum >= 5 && (flagshipStype === 7 && (DE + DD) >= 4) && (AA >= 240 && ASW >= 300 && LOS >= 180) && totalLv >= 271
+                return flagshipLv >= 50 && shipNum >= 5 && (flagshipStype === 7 && (DE + DD) >= 4) && (AA >= 240 && ASW >= 300 && LOS >= 180) && totalLv >= 240
             // 西方海域
             case 25: // 通商破壊作戦
                 return flagshipLv >= 25 && shipNum >= 4 && (CA >= 2 && DD >= 2)
@@ -186,9 +210,9 @@ function canMission(id, fleetId) {
             case 32: // 遠洋練習航海
                 return flagshipLv >= 5 && shipNum >= 3 && (flagshipStype === 21 && DD >= 2)
             case 131: // 西方海域偵察作戦
-                return flagshipLv >= 50 && shipNum >= 5 && (flagshipStype === 16 && DD >= 4) && (ASW >= 240 && LOS >= 300)
+                return flagshipLv >= 50 && shipNum >= 5 && (flagshipStype === 16 && (DE + DD) >= 4) && (AA >= 240 && ASW >= 240 && LOS >= 300)
             case 132: // 西方潜水艦作戦
-                return flagshipLv >= 55 && shipNum >= 5 && (flagshipStype === 20 && (SS + SSV) >= 3)
+                return flagshipLv >= 55 && shipNum >= 5 && (flagshipStype === 20 && (SS + SSV) >= 3 && (CL + DD) >= 1)
             // 南方海域
             case 33: // 前衛支援任務
                 return shipNum >= 2 && DD >= 2
@@ -264,10 +288,32 @@ function toTotalValue(ships, kind, exceptionItemCategory) {
             return item.param[kind]
         }).reduce(function (previous, current) {
             return previous + current
-        }, 0)
+        }, 0) + getImprovementBonus(ship, kind)
     }).reduce(function (previous, current) {
         return previous + current
     }, 0)
+
+    function getImprovementBonus(ship, kind) {
+        var items = toItemList(ship)
+        if (kind === "houg") {
+            return items.map(function(item) {
+                switch(item.type2) {
+                    /** 小口径主砲 */
+                    case 1: return 0.5 * Math.sqrt(item.level)
+                    /** 中口径主砲 */
+                    case 2: return Math.sqrt(item.level)
+                    /** 大口径主砲 */
+                    case 3: return 0.75 * Math.sqrt(item.level)
+                    /** 副砲 */
+                    case 4: return 0.15 * item.level
+                }
+                return 0
+            }).reduce(function (previous, current) {
+                return previous + current
+            }, 0)
+        }
+        return 0
+    }
 }
 
 /**
@@ -282,21 +328,4 @@ function toItemList(ship) {
     return item2.filter(function (item) {
         return item
     })
-}
-
-/**
- * 護衛隊遠征編成を満たすか
- *
- * @param {{Number:[logbook.dto.ShipDto]}} stypes 艦種IDごとに振り分けられた連想配列
- * @return {Boolean} 護衛隊遠征編成か
- */
-function hasFleetEscortForce(stypes) {
-    var DE = Optional.ofNullable(stypes[1]).orElse([]).length
-    var DD = Optional.ofNullable(stypes[2]).orElse([]).length
-    var CL = Optional.ofNullable(stypes[3]).orElse([]).length
-    var CT = Optional.ofNullable(stypes[21]).orElse([]).length
-    var CVE = Optional.ofNullable(Java.from(stypes[7])).orElse([]).filter(function (ship) {
-        return ship.max.taisen > 0
-    }).length
-    return CL >= 1 && (DD + DE) >= 2 || DD >= 1 && DE >= 3 || CT >= 1 && DE >= 2 || CVE >= 1 && DE >= 2 || CVE >= 1 && DD >= 2
 }

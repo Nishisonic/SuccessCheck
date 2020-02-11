@@ -1,10 +1,10 @@
-load('script/utils.js')
-load('script/util_missioncheck.js')
+load("script/utils.js")
+load("script/util_missioncheck.js")
 
 var fleetId
 
 function header() {
-  return ['成功']
+  return ["成功"]
 }
 
 function begin(fleetId) {
