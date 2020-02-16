@@ -1,6 +1,6 @@
 /**
  * 遠征確認
- * @version 2.0.5
+ * @version 2.0.6
  * @author Nishikuma
  */
 
@@ -62,7 +62,7 @@ function canMission(id, fleetId) {
         var BB = (stypes[9] || []).length
         /** 航空戦艦 */
         var BBV = (stypes[10] || []).length
-        /** 航空母艦 */
+        /** 正規空母 */
         var CV = (stypes[11] || []).length
         /** 超弩級戦艦 */
         var XBB = (stypes[12] || []).length
@@ -187,9 +187,9 @@ function canMission(id, fleetId) {
             case 42: // ミ船団護衛(一号船団)
                 return flagshipLv >= 45 && shipNum >= 4 && (CL >= 1 && (DE + DD) >= 2 || isFleetEscortForce) && totalLv >= 200
             case 43: // ミ船団護衛(二号船団)
-                return flagshipLv >= 55 && shipNum >= 6 && (((flagshipStype === 7 && flagship.max.taisen > 0) && (DE + DD) >= 2) || (flagshipStype === 7 && CL === 1 && DD >= 4)) && (FP >= 500 && ASW >= 280) && totalLv >= 406
+                return flagshipLv >= 55 && shipNum >= 6 && (((flagshipStype === 7 && flagship.max.taisen > 0) && (DE >= 2 || DD >= 2)) || (flagshipStype === 7 && CL === 1 && DD >= 4)) && (FP >= 500 && ASW >= 280) && totalLv >= 406
             case 44: // 航空装備輸送任務
-                return flagshipLv >= 35 && shipNum >= 6 && ((CV + CVL + CVB) >= 2 && AV >= 1 && CL >= 1 && DD >= 2) && ASW >= 200 && (drumShips >= 3 && drum >= 6) && totalLv >= 210
+                return flagshipLv >= 35 && shipNum >= 6 && ((CV + CVL + CVB + AV) >= 2 && AV >= 1 && CL >= 1 && DD >= 2) && ASW >= 200 && (drumShips >= 3 && drum >= 6) && totalLv >= 210
             case 45: // ボーキサイト船団護衛
                 return flagshipLv >= 50 && shipNum >= 5 && (flagshipStype === 7 && (DE + DD) >= 4) && (AA >= 240 && ASW >= 300 && LOS >= 180) && totalLv >= 240
             // 西方海域
@@ -210,7 +210,7 @@ function canMission(id, fleetId) {
             case 32: // 遠洋練習航海
                 return flagshipLv >= 5 && shipNum >= 3 && (flagshipStype === 21 && DD >= 2)
             case 131: // 西方海域偵察作戦
-                return flagshipLv >= 50 && shipNum >= 5 && (flagshipStype === 16 && (DE + DD) >= 4) && (AA >= 240 && ASW >= 240 && LOS >= 300)
+                return flagshipLv >= 50 && shipNum >= 5 && (flagshipStype === 16 && (DE + DD) >= 4) && (AA >= 240 && ASW >= 240 && LOS >= 300) && totalLv >= 229
             case 132: // 西方潜水艦作戦
                 return flagshipLv >= 55 && shipNum >= 5 && (flagshipStype === 20 && (SS + SSV) >= 3 && (CL + DD) >= 1)
             // 南方海域
@@ -303,7 +303,7 @@ function toTotalValue(ships, kind, exceptionItemCategory) {
                     /** 中口径主砲 */
                     case 2: return Math.sqrt(item.level)
                     /** 大口径主砲 */
-                    case 3: return 0.75 * Math.sqrt(item.level)
+                    case 3: return 0.9 * Math.sqrt(item.level)
                     /** 副砲 */
                     case 4: return 0.15 * item.level
                 }
