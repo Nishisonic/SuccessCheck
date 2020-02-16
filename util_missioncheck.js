@@ -1,6 +1,6 @@
 /**
  * 遠征確認
- * @version 2.0.6
+ * @version 2.0.7
  * @author Nishikuma
  */
 
@@ -306,6 +306,19 @@ function toTotalValue(ships, kind, exceptionItemCategory) {
                     case 3: return 0.9 * Math.sqrt(item.level)
                     /** 副砲 */
                     case 4: return 0.15 * item.level
+                }
+                return 0
+            }).reduce(function (previous, current) {
+                return previous + current
+            }, 0)
+        }
+        if (kind === "tais") {
+            return items.map(function(item) {
+                switch(item.type2) {
+                    /** ソナー */
+                    case 14:
+                    /** 爆雷 */
+                    case 15: return Math.sqrt(item.level)
                 }
                 return 0
             }).reduce(function (previous, current) {
