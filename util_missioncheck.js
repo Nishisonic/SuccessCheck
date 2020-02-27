@@ -1,6 +1,6 @@
 /**
  * 遠征確認
- * @version 2.0.8
+ * @version 2.0.9
  * @author Nishikuma
  */
 
@@ -314,6 +314,19 @@ function toTotalValue(ships, kind, exceptionItemCategory) {
                 return previous + current
             }, 0)
         }
+        if (kind === "tyku") {
+            return items.map(function(item) {
+                switch(item.type3) {
+                    /** 機銃 */
+                    case 15: return Math.sqrt(item.level)
+                    /** 高角砲 */
+                    case 16: return 0.3 * item.level
+                }
+                return 0
+            }).reduce(function (previous, current) {
+                return previous + current
+            }, 0)
+        }
         if (kind === "tais") {
             return items.map(function(item) {
                 switch(item.type2) {
@@ -329,11 +342,9 @@ function toTotalValue(ships, kind, exceptionItemCategory) {
         }
         if (kind === "saku") {
             return items.map(function(item) {
-                switch(item.type2) {
-                    /** 小型電探 */
-                    case 12:
-                    /** 大型電探 */
-                    case 13: return Math.sqrt(item.level)
+                switch(item.type3) {
+                    /** 電探 */
+                    case 11: return Math.sqrt(item.level)
                 }
                 return 0
             }).reduce(function (previous, current) {
