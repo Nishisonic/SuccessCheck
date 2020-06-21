@@ -1,6 +1,6 @@
 /**
  * 遠征確認
- * @version 2.1.2
+ * @version 2.1.3
  * @author Nishikuma
  */
 
@@ -105,7 +105,7 @@ function canMission(id, fleetId) {
         /** 対空合計 */
         var AA = toTotalValue(ships, "tyku")
         /** 対潜合計 */
-        var ASW = toTotalValue(ships, "tais", [10, 11, 41])
+        var ASW = toTotalValue(ships, "tais")
         /** 索敵合計 */
         var LOS = toTotalValue(ships, "saku")
         /** ドラム缶所持艦合計 */
@@ -138,7 +138,11 @@ function canMission(id, fleetId) {
             case 102: // 長時間対潜警戒
                 return flagshipLv >= 35 && shipNum >= 5 && (CL >= 1 && (DE + DD) >= 3 || isFleetEscortForce) && (AA >= 59 && ASW >= 280 && LOS >= 60) && totalLv >= 185
             case 103: // 南西方面連絡線哨戒
-                return flagshipLv >= 40 && shipNum >= 5 && (CL >= 1 && (DE + DD) >= 2 || isFleetEscortForce) && (FP >= 300 && AA >= 200 && ASW >= 200 && LOS >= 120) && totalLv >= 200
+                return flagshipLv >= 40 && shipNum >= 5 && (CL >= 1 && DD >= 2 || isFleetEscortForce) && (FP >= 300 && AA >= 200 && ASW >= 200 && LOS >= 120) && totalLv >= 200
+            case 104: // 小笠原沖哨戒線
+                return flagshipLv >= 45 && shipNum >= 5 && (CL >= 1 && DD >= 3 || isFleetEscortForce) && (FP >= 280 && AA >= 220 && ASW >= 240 && LOS >= 150) && totalLv >= 230
+            case 105: // 小笠原沖戦闘哨戒
+                return flagshipLv >= 55 && shipNum >= 5 && (CL >= 1 && DD >= 3 || isFleetEscortForce) && (FP >= 330 && AA >= 300 && ASW >= 270 && LOS >= 180) && totalLv >= 290
             // 南西諸島海域
             case 9: // タンカー護衛任務
                 return flagshipLv >= 3 && shipNum >= 4 && (CL >= 1 && (DE + DD) >= 2 || isFleetEscortForce)
@@ -163,9 +167,9 @@ function canMission(id, fleetId) {
             case 112: // 南西諸島離島哨戒作戦
                 return flagshipLv >= 50 && shipNum >= 6 && (AV >= 1 && CL >= 1 && (DE + DD) >= 4) && (FP >= 400 && AA >= 220 && ASW >= 220 && LOS >= 190) && totalLv >= 250
             case 113: // 南西諸島離島防衛作戦
-                return flagshipLv >= 55 && shipNum >= 6 && (CA >= 2 && CL >= 1 && DD >= 2 && (SS + SSV) >= 1) && (FP >= 500 && ASW >= 280) && totalLv >= 349
+                return flagshipLv >= 55 && shipNum >= 6 && (CA >= 2 && CL >= 1 && DD >= 2 && (SS + SSV) >= 1) && (FP >= 500 && AA >= 280 && ASW >= 280 && LOS >= 170) && totalLv >= 300
             case 114: // 南西諸島捜索撃滅戦
-                return flagshipLv >= 64 && shipNum >= 6 && (AV >= 1 && CL >= 1 && DD >= 2) && (FP >= 510 && AA >= 400 && ASW >= 285 && LOS >= 385) && totalLv >= 405
+                return flagshipLv >= 60 && shipNum >= 6 && (AV >= 1 && CL >= 1 && DD >= 2) && (FP >= 510 && AA >= 400 && ASW >= 285 && LOS >= 385) && totalLv >= 330
             // 北方海域
             case 17: // 敵地偵察作戦
                 return flagshipLv >= 20 && shipNum >= 6 && (CL >= 1 && DD >= 3)
@@ -189,9 +193,9 @@ function canMission(id, fleetId) {
             case 42: // ミ船団護衛(一号船団)
                 return flagshipLv >= 45 && shipNum >= 4 && (CL >= 1 && (DE + DD) >= 2 || isFleetEscortForce) && totalLv >= 200
             case 43: // ミ船団護衛(二号船団)
-                return flagshipLv >= 55 && shipNum >= 6 && (((flagshipStype === 7 && flagship.max.taisen > 0) && (DE >= 2 || DD >= 2)) || (flagshipStype === 7 && CL === 1 && DD >= 4)) && (FP >= 500 && AA >= 280 && ASW >= 280 && LOS >= 209) && totalLv >= 300
+                return flagshipLv >= 55 && shipNum >= 6 && (((flagshipStype === 7 && flagship.max.taisen > 0) && (DE >= 2 || DD >= 2)) || (flagshipStype === 7 && CL === 1 && DD >= 4)) && (FP >= 500 && AA >= 280 && ASW >= 280 && LOS >= 170) && totalLv >= 300
             case 44: // 航空装備輸送任務
-                return flagshipLv >= 35 && shipNum >= 6 && ((CV + CVL + CVB + AV) >= 2 && AV >= 1 && CL >= 1 && (DE + DD) >= 2) && ASW >= 200 && (drumShips >= 3 && drum >= 6) && totalLv >= 210
+                return flagshipLv >= 35 && shipNum >= 6 && ((CV + CVL + CVB + AV) >= 2 && AV >= 1 && CL >= 1 && (DE + DD) >= 2) && (AA >= 200 && ASW >= 200 && LOS >= 150) && (drumShips >= 3 && drum >= 6) && totalLv >= 210
             case 45: // ボーキサイト船団護衛
                 return flagshipLv >= 50 && shipNum >= 5 && (flagshipStype === 7 && (DE + DD) >= 4) && (AA >= 240 && ASW >= 300 && LOS >= 180) && totalLv >= 240
             // 西方海域
@@ -233,7 +237,7 @@ function canMission(id, fleetId) {
             case 40: // 水上機前線輸送
                 return flagshipLv >= 25 && shipNum >= 6 && (flagshipStype === 3 && AV >= 2 && DD >= 2) && totalLv >= 150
             case 141: // ラバウル方面艦隊進出
-                return flagshipLv >= 61 && shipNum >= 6 && (flagshipStype === 5 && CL >= 1 && DD >= 3) && (FP >= 450 && AA >= 350 && ASW >= 330 && LOS >= 250) && totalLv >= 349
+                return flagshipLv >= 55 && shipNum >= 6 && (flagshipStype === 5 && CL >= 1 && DD >= 3) && (FP >= 450 && AA >= 350 && ASW >= 330 && LOS >= 250) && totalLv >= 290
             default:
                 return undefined
         }
@@ -280,18 +284,23 @@ function toHasItemShipNum(ships, slotitemId) {
  *
  * @param {[logbook.dto.ShipDto]} ships 艦娘リスト
  * @param {String} kind 集計するパラメータの種別
- * @param {[Number]} exceptionItemCategory 集計から除外する装備カテゴリ
  * @return {Number} パラメータ合計値
  */
-function toTotalValue(ships, kind, exceptionItemCategory) {
-    var e = exceptionItemCategory ? exceptionItemCategory : []
+function toTotalValue(ships, kind) {
     return ships.map(function (ship) {
-        return ship.param[kind] - toItemList(ship).filter(function (item) {
-            return e.indexOf(item.type2) >= 0
-        }).map(function (item) {
-            return item.param[kind]
-        }).reduce(function (previous, current) {
-            return previous + current
+        return ship.param[kind] - toItemList(ship).reduce(function (previous, item, index) {
+            var value = (function (item) {
+                if (item.slot4 > 0) {
+                    if (ship.onSlot[index] > 2) {
+                        return item.param[kind] + Math.floor(item.param[kind] * (-0.35 + Math.sqrt(ship.onSlot[index])))
+                    } else if (ship.onSlot[index] > 0) {
+                        return item.param[kind]
+                    }
+                    return 0
+                }
+                return item.param[kind]
+            })(item)
+            return previous + value
         }, 0) + getImprovementBonus(ship, kind)
     }).reduce(function (previous, current) {
         return previous + current
