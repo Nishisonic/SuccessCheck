@@ -1,6 +1,6 @@
 /**
  * 遠征確認
- * @version 2.1.3
+ * @version 2.1.4
  * @author Nishikuma
  */
 
@@ -288,17 +288,15 @@ function toHasItemShipNum(ships, slotitemId) {
  */
 function toTotalValue(ships, kind) {
     return ships.map(function (ship) {
-        return ship.param[kind] - toItemList(ship).reduce(function (previous, item, index) {
+        return ship.param[kind] + toItemList(ship).reduce(function (previous, item, index) {
             var value = (function (item) {
-                if (item.slot4 > 0) {
-                    if (ship.onSlot[index] > 2) {
-                        return item.param[kind] + Math.floor(item.param[kind] * (-0.35 + Math.sqrt(ship.onSlot[index])))
-                    } else if (ship.onSlot[index] > 0) {
-                        return item.param[kind]
+                if (item.type4 > 0) {
+                    if (ship.onSlot[index] > 0) {
+                        return Math.floor(item.param[kind] * (-0.35 + Math.sqrt(Math.max(0, ship.onSlot[index] - 2))))
                     }
-                    return 0
+                    return -item.param[kind]
                 }
-                return item.param[kind]
+                return 0
             })(item)
             return previous + value
         }, 0) + getImprovementBonus(ship, kind)
