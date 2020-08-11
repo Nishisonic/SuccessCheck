@@ -1,6 +1,6 @@
 /**
  * 遠征確認
- * @version 2.1.5
+ * @version 2.1.6
  * @author Nishikuma
  */
 
@@ -136,7 +136,7 @@ function canMission(id, fleetId) {
             case 101: // 海峡警備行動
                 return flagshipLv >= 20 && shipNum >= 4 && (DE + DD) >= 4 && (FP >= 50 && AA >= 70 && ASW >= 180)
             case 102: // 長時間対潜警戒
-                return flagshipLv >= 35 && shipNum >= 5 && (CL >= 1 && (DE + DD) >= 3 || isFleetEscortForce) && (AA >= 59 && ASW >= 280 && LOS >= 60) && totalLv >= 185
+                return flagshipLv >= 35 && shipNum >= 5 && (CL >= 1 && (DE + DD) >= 3 || isFleetEscortForce) && (ASW >= 280 && LOS >= 60) && totalLv >= 185
             case 103: // 南西方面連絡線哨戒
                 return flagshipLv >= 40 && shipNum >= 5 && (CL >= 1 && DD >= 2 || isFleetEscortForce) && (FP >= 300 && AA >= 200 && ASW >= 200 && LOS >= 120) && totalLv >= 200
             case 104: // 小笠原沖哨戒線
