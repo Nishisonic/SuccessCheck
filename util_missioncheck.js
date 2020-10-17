@@ -1,6 +1,6 @@
 /**
  * 遠征確認
- * @version 2.1.6
+ * @version 2.1.7
  * @author Nishikuma
  */
 
@@ -198,6 +198,8 @@ function canMission(id, fleetId) {
                 return flagshipLv >= 35 && shipNum >= 6 && ((CV + CVL + CVB + AV) >= 2 && AV >= 1 && CL >= 1 && (DE + DD) >= 2) && (AA >= 200 && ASW >= 200 && LOS >= 150) && (drumShips >= 3 && drum >= 6) && totalLv >= 210
             case 45: // ボーキサイト船団護衛
                 return flagshipLv >= 50 && shipNum >= 5 && (flagshipStype === 7 && (DE + DD) >= 4) && (AA >= 240 && ASW >= 300 && LOS >= 180) && totalLv >= 240
+            case 46: // 南西海域戦闘哨戒
+                return flagshipLv >= 60 && shipNum >= 5 && (CA >= 2 && CL >= 1 && DD >= 2) && (FP >= 350 && AA >= 299 && ASW >= 220 && LOS >= 200) && totalLv >= 300
             // 西方海域
             case 25: // 通商破壊作戦
                 return flagshipLv >= 25 && shipNum >= 4 && (CA >= 2 && DD >= 2)
@@ -238,6 +240,8 @@ function canMission(id, fleetId) {
                 return flagshipLv >= 25 && shipNum >= 6 && (flagshipStype === 3 && AV >= 2 && DD >= 2) && totalLv >= 150
             case 141: // ラバウル方面艦隊進出
                 return flagshipLv >= 55 && shipNum >= 6 && (flagshipStype === 5 && CL >= 1 && DD >= 3) && (FP >= 450 && AA >= 350 && ASW >= 330 && LOS >= 250) && totalLv >= 290
+            case 142: // 強行鼠輸送作戦
+                return flagshipLv >= 70 && shipNum >= 5 && DD >= 5 && (FP >= 280 && AA >= 280 && ASW >= 270 && LOS >= 160) && totalLv >= 353 && (drumShips >= 3 && drum >= 4)
             default:
                 return undefined
         }
