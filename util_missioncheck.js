@@ -1,6 +1,6 @@
 /**
  * 遠征確認
- * @version 2.1.8
+ * @version 2.1.9
  * @author Nishikuma
  */
 
@@ -170,6 +170,8 @@ function canMission(id, fleetId) {
                 return flagshipLv >= 55 && shipNum >= 6 && (CA >= 2 && CL >= 1 && DD >= 2 && (SS + SSV) >= 1) && (FP >= 500 && AA >= 280 && ASW >= 280 && LOS >= 170) && totalLv >= 300
             case 114: // 南西諸島捜索撃滅戦
                 return flagshipLv >= 60 && shipNum >= 6 && (AV >= 1 && CL >= 1 && DD >= 2) && (FP >= 510 && AA >= 400 && ASW >= 285 && LOS >= 385) && totalLv >= 330
+            case 115: // 精鋭水雷戦隊夜襲
+                return flagshipLv >= 75 && shipNum >= 6 && (flagshipStype === 3 && DD >= 5) && (FP >= 410 && AA >= 390 && ASW >= 410 && LOS >= 340) && totalLv >= 400
             // 北方海域
             case 17: // 敵地偵察作戦
                 return flagshipLv >= 20 && shipNum >= 6 && (CL >= 1 && DD >= 3)
@@ -221,6 +223,8 @@ function canMission(id, fleetId) {
                 return flagshipLv >= 50 && shipNum >= 5 && (flagshipStype === 16 && DD >= 3) && (AA >= 240 && ASW >= 240 && LOS >= 300) && totalLv >= 200
             case 132: // 西方潜水艦作戦
                 return flagshipLv >= 55 && shipNum >= 5 && (flagshipStype === 20 && (SS + SSV) >= 3) && (FP >= 60 && AA >= 80 && ASW >= 50) && totalLv >= 270
+            case 133: // 欧州方面友軍との接触
+                return flagshipLv >= 65 && shipNum >= 5 && (flagshipStype === 20 && (SS + SSV) >= 3) && (FP >= 115 && AA >= 90 && ASW >= 70 && LOS >= 95) && totalLv >= 350
             // 南方海域
             case 33: // 前衛支援任務
                 return shipNum >= 2 && DD >= 2
