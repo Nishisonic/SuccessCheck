@@ -1,6 +1,6 @@
 /**
  * 遠征確認
- * @version 2.1.9
+ * @version 2.2.0
  * @author Nishikuma
  */
 
@@ -13,7 +13,7 @@ GlobalContext = Java.type("logbook.data.context.GlobalContext")
  * @param {Number} fleetId 艦隊番号
  * @return {String} ○ or ｘ or "？"
  */
-function canMissionToString(missionId, fleetId){
+function canMissionToString(missionId, fleetId) {
     var c = canMission(missionId, fleetId)
     return c === undefined ? "？" : c ? "○" : "ｘ"
 }
@@ -31,7 +31,7 @@ function canMission(id, fleetId) {
     if (dock && dock.ships) {
         var ships = Java.from(dock.ships)
         var shipNum = ships.length
-        var stypes = ships.reduce(function(array, ship) {
+        var stypes = ships.reduce(function (array, ship) {
             if (!Array.isArray(array[ship.stype])) {
                 array[ship.stype] = []
             }
@@ -143,6 +143,7 @@ function canMission(id, fleetId) {
                 return flagshipLv >= 45 && shipNum >= 5 && (CL >= 1 && DD >= 3 || isFleetEscortForce) && (FP >= 280 && AA >= 220 && ASW >= 240 && LOS >= 150) && totalLv >= 230
             case 105: // 小笠原沖戦闘哨戒
                 return flagshipLv >= 55 && shipNum >= 5 && (CL >= 1 && DD >= 3 || isFleetEscortForce) && (FP >= 330 && AA >= 300 && ASW >= 270 && LOS >= 180) && totalLv >= 290
+            
             // 南西諸島海域
             case 9: // タンカー護衛任務
                 return flagshipLv >= 3 && shipNum >= 4 && (CL >= 1 && (DE + DD) >= 2 || isFleetEscortForce)
@@ -172,6 +173,7 @@ function canMission(id, fleetId) {
                 return flagshipLv >= 60 && shipNum >= 6 && (AV >= 1 && CL >= 1 && DD >= 2) && (FP >= 510 && AA >= 400 && ASW >= 285 && LOS >= 385) && totalLv >= 330
             case 115: // 精鋭水雷戦隊夜襲
                 return flagshipLv >= 75 && shipNum >= 6 && (flagshipStype === 3 && DD >= 5) && (FP >= 410 && AA >= 390 && ASW >= 410 && LOS >= 340) && totalLv >= 400
+            
             // 北方海域
             case 17: // 敵地偵察作戦
                 return flagshipLv >= 20 && shipNum >= 6 && (CL >= 1 && DD >= 3)
@@ -189,6 +191,7 @@ function canMission(id, fleetId) {
                 return flagshipLv >= 50 && shipNum >= 6 && (BBV >= 2 && DD >= 2) && totalLv >= 200
             case 24: // 北方航路海上護衛
                 return flagshipLv >= 50 && shipNum >= 6 && (flagshipStype === 3 && (DE + DD) >= 4) && totalLv >= 200
+            
             // 南西海域
             case 41: // ブルネイ泊地沖哨戒
                 return flagshipLv >= 30 && shipNum >= 3 && (DE + DD) >= 3 && (FP >= 60 && AA >= 80 && ASW >= 210) && totalLv >= 100
@@ -202,6 +205,7 @@ function canMission(id, fleetId) {
                 return flagshipLv >= 50 && shipNum >= 5 && (flagshipStype === 7 && (DE + DD) >= 4) && (AA >= 240 && ASW >= 300 && LOS >= 180) && totalLv >= 240
             case 46: // 南西海域戦闘哨戒
                 return flagshipLv >= 60 && shipNum >= 5 && (CA >= 2 && CL >= 1 && DD >= 2) && (FP >= 350 && AA >= 250 && ASW >= 220 && LOS >= 190) && totalLv >= 300
+            
             // 西方海域
             case 25: // 通商破壊作戦
                 return flagshipLv >= 25 && shipNum >= 4 && (CA >= 2 && DD >= 2)
@@ -225,6 +229,7 @@ function canMission(id, fleetId) {
                 return flagshipLv >= 55 && shipNum >= 5 && (flagshipStype === 20 && (SS + SSV) >= 3) && (FP >= 60 && AA >= 80 && ASW >= 50) && totalLv >= 270
             case 133: // 欧州方面友軍との接触
                 return flagshipLv >= 65 && shipNum >= 5 && (flagshipStype === 20 && (SS + SSV) >= 3) && (FP >= 115 && AA >= 90 && ASW >= 70 && LOS >= 95) && totalLv >= 350
+                
             // 南方海域
             case 33: // 前衛支援任務
                 return shipNum >= 2 && DD >= 2
@@ -315,20 +320,25 @@ function toTotalValue(ships, kind) {
     function getImprovementBonus(ship, kind) {
         var items = toItemList(ship)
         if (kind === "houg") {
-            return items.map(function(item) {
-                switch(item.type2) {
-                    /** 小口径主砲 */
-                    case 1: return 0.5 * Math.sqrt(item.level)
-                    /** 中口径主砲 */
-                    case 2: return Math.sqrt(item.level)
-                    /** 大口径主砲 */
-                    case 3: return 0.9 * Math.sqrt(item.level)
-                    /** 副砲 */
-                    case 4: return 0.15 * item.level
-                    /** 徹甲弾 */
-                    case 19: return 0.5 * Math.sqrt(item.level)
-                    /** 機銃 */
-                    case 21: return 0.5 * Math.sqrt(item.level)
+            return items.map(function (item) {
+                switch (item.type2) {
+                    case 1: // 小口径主砲
+                        return 0.5 * Math.sqrt(item.level)
+                    case 2: // 中口径主砲
+                        return Math.sqrt(item.level)
+                    case 3: // 大口径主砲
+                        return Math.sqrt(item.level)
+                    case 4: // 副砲
+                        return 0.5 * Math.sqrt(item.level)
+                    case 12: // 小型電探
+                        return 0.5 * Math.sqrt(item.level)
+                    case 13:
+                    case 93: // 大型電探
+                        return Math.sqrt(item.level)
+                    case 19: // 対艦強化弾
+                        return 0.5 * Math.sqrt(item.level)
+                    case 21: // 機銃
+                        return 0.5 * Math.sqrt(item.level)
                 }
                 return 0
             }).reduce(function (previous, current) {
@@ -336,12 +346,12 @@ function toTotalValue(ships, kind) {
             }, 0)
         }
         if (kind === "tyku") {
-            return items.map(function(item) {
-                switch(item.type3) {
-                    /** 機銃 */
-                    case 15: return Math.sqrt(item.level)
-                    /** 高角砲 */
-                    case 16: return 0.3 * item.level
+            return items.map(function (item) {
+                switch (item.type3) {
+                    case 15: // 機銃
+                        return Math.sqrt(item.level)
+                    case 16: // 高角砲
+                        return Math.sqrt(item.level)
                 }
                 return 0
             }).reduce(function (previous, current) {
@@ -349,12 +359,26 @@ function toTotalValue(ships, kind) {
             }, 0)
         }
         if (kind === "tais") {
-            return items.map(function(item) {
-                switch(item.type2) {
-                    /** ソナー */
-                    case 14:
-                    /** 爆雷 */
-                    case 15: return Math.sqrt(item.level)
+            return items.map(function (item) {
+                switch (item.getType2()) {
+                    case 10: // 水上偵察機
+                    case 11: // 水上爆撃機
+                    case 7: // 艦上爆撃機
+                    case 8: // 艦上攻撃機
+                    case 25: // オートジャイロ
+                        if (item.getParam().getTaisen() < 5) {
+                            return 0
+                        }
+                        else if (item.getParam().getTaisen() < 7) { // 6かも
+                            return 0.5 * Math.sqrt(item.level)
+                        }
+                        else {
+                            return Math.sqrt(item.level)
+                        }
+                    case 14: // ソナー
+                        return Math.sqrt(item.level)
+                    case 15: // 爆雷
+                        return Math.sqrt(item.level)
                 }
                 return 0
             }).reduce(function (previous, current) {
@@ -362,10 +386,14 @@ function toTotalValue(ships, kind) {
             }, 0)
         }
         if (kind === "saku") {
-            return items.map(function(item) {
-                switch(item.type3) {
-                    /** 電探 */
-                    case 11: return Math.sqrt(item.level)
+            return items.map(function (item) {
+                switch (item.type2) {
+                    case 10: // 水上偵察機
+                        return Math.sqrt(item.level)
+                    case 12:
+                    case 13:
+                    case 93: // 電探
+                        return Math.sqrt(item.level)
                 }
                 return 0
             }).reduce(function (previous, current) {
